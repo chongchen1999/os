@@ -1,17 +1,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <semaphore.h>
 #include <unistd.h>
+#include <assert.h>
 
 #define BUFFER_SIZE 10  // Size of the shared buffer
 
 int buffer[BUFFER_SIZE]; // The shared buffer
-int count = 0;           // Number of items in the buffer
-int item = 0;            // ID of the next item to be produced
+int in = 0;              // Index for the producer
+int out = 0;             // Index for the consumer
+int item = 0;            // Item to be produced
 
-pthread_mutex_t mutex;                // Mutex to protect the buffer
-pthread_cond_t cond_producer;         // Condition variable for producer
-pthread_cond_t cond_consumer;         // Condition variable for consumer
+// Semaphores
+sem_t empty;   // Tracks empty slots
+sem_t full;    // Tracks filled slots
+sem_t mutex;   // Ensures mutual exclusion
 
 // Struct to pass thread arguments
 typedef struct {
@@ -24,22 +28,25 @@ void* producer(void* arg) {
     int producer_id = args->id;
 
     while (1) {
-        pthread_mutex_lock(&mutex);
-
-        // Wait if the buffer is full
-        while (count == BUFFER_SIZE) {
-            pthread_cond_wait(&cond_producer, &mutex);
-        }
-
         // Produce a new item
         item++;
-        buffer[count] = item;
-        count++;
-        printf("Producer %d produced: %d, total items: %d\n", producer_id, item, count);
 
-        // Signal the consumer that there is an item available
-        pthread_cond_signal(&cond_consumer);
-        pthread_mutex_unlock(&mutex);
+        // Wait for an empty slot
+        sem_wait(&empty);
+
+        // Lock the critical section
+        sem_wait(&mutex);
+
+        // Add the item to the buffer
+        buffer[in] = item;
+        printf("Producer %d produced: %d at index %d\n", producer_id, item, in);
+        in = (in + 1) % BUFFER_SIZE;
+
+        // Unlock the critical section
+        sem_post(&mutex);
+
+        // Signal that a new item is available
+        sem_post(&full);
 
         sleep(0.1); // Simulate production time
     }
@@ -52,21 +59,22 @@ void* consumer(void* arg) {
     int consumer_id = args->id;
 
     while (1) {
-        pthread_mutex_lock(&mutex);
+        // Wait for a filled slot
+        sem_wait(&full);
 
-        // Wait if the buffer is empty
-        while (count == 0) {
-            pthread_cond_wait(&cond_consumer, &mutex);
-        }
+        // Lock the critical section
+        sem_wait(&mutex);
 
-        // Consume an item
-        int consumed_item = buffer[count - 1];
-        count--;
-        printf("Consumer %d consumed: %d, total items: %d\n", consumer_id, consumed_item, count);
+        // Remove an item from the buffer
+        int consumed_item = buffer[out];
+        printf("Consumer %d consumed: %d from index %d\n", consumer_id, consumed_item, out);
+        out = (out + 1) % BUFFER_SIZE;
 
-        // Signal the producer that there is space available
-        pthread_cond_signal(&cond_producer);
-        pthread_mutex_unlock(&mutex);
+        // Unlock the critical section
+        sem_post(&mutex);
+
+        // Signal that an empty slot is available
+        sem_post(&empty);
 
         sleep(0.2); // Simulate consumption time
     }
@@ -98,10 +106,10 @@ int main() {
     pthread_t producer_threads[num_producers];
     pthread_t consumer_threads[num_consumers];
 
-    // Initialize the mutex and condition variables
-    pthread_mutex_init(&mutex, NULL);
-    pthread_cond_init(&cond_producer, NULL);
-    pthread_cond_init(&cond_consumer, NULL);
+    // Initialize the semaphores
+    sem_init(&empty, 0, BUFFER_SIZE); // Start with all slots empty
+    sem_init(&full, 0, 0);            // Start with no filled slots
+    sem_init(&mutex, 0, 1);           // Mutex starts unlocked
 
     // Create the producer and consumer threads
     createProducers(producer_threads, num_producers);
@@ -117,9 +125,9 @@ int main() {
     }
 
     // Clean up
-    pthread_mutex_destroy(&mutex);
-    pthread_cond_destroy(&cond_producer);
-    pthread_cond_destroy(&cond_consumer);
+    sem_destroy(&empty);
+    sem_destroy(&full);
+    sem_destroy(&mutex);
 
     return 0;
 }

@@ -1,0 +1,7 @@
+/home/tourist/DIY/os-jyy/06-synchronization/build/CMakeFiles/a.dir
+/home/tourist/DIY/os-jyy/06-synchronization/build/CMakeFiles/b.dir
+/home/tourist/DIY/os-jyy/06-synchronization/build/CMakeFiles/c.dir
+/home/tourist/DIY/os-jyy/06-synchronization/build/CMakeFiles/d.dir
+/home/tourist/DIY/os-jyy/06-synchronization/build/CMakeFiles/e.dir
+/home/tourist/DIY/os-jyy/06-synchronization/build/CMakeFiles/edit_cache.dir
+/home/tourist/DIY/os-jyy/06-synchronization/build/CMakeFiles/rebuild_cache.dir

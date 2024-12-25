@@ -1,0 +1,1 @@
+/usr/bin/cc CMakeFiles/a.dir/producer_consumer_mutax_lock.c.o -o a 

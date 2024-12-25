@@ -1,0 +1,1 @@
+/usr/bin/cc CMakeFiles/b.dir/print_seq.c.o -o b 

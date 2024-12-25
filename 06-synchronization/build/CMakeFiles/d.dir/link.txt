@@ -1,0 +1,1 @@
+/usr/bin/cc CMakeFiles/d.dir/producer_consumer_atomic_integer.c.o -o d 
