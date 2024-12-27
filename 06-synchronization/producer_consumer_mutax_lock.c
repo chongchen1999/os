@@ -1,22 +1,22 @@
+#include <assert.h>
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <pthread.h>
 #include <unistd.h>
-#include <assert.h>
 
 #define BUFFER_SIZE 10  // Size of the shared buffer
 
-int buffer[BUFFER_SIZE]; // The shared buffer
-int count = 0;           // Number of items in the buffer
-int item = 0;            // ID of the next item to be produced
+int buffer[BUFFER_SIZE];  // The shared buffer
+int count = 0;            // Number of items in the buffer
+int item = 0;             // ID of the next item to be produced
 
-pthread_mutex_t mutex;                // Mutex to protect the buffer
-pthread_cond_t cond_producer;         // Condition variable for producer
-pthread_cond_t cond_consumer;         // Condition variable for consumer
+pthread_mutex_t mutex;         // Mutex to protect the buffer
+pthread_cond_t cond_producer;  // Condition variable for producer
+pthread_cond_t cond_consumer;  // Condition variable for consumer
 
 // Struct to pass thread arguments
 typedef struct {
-    int id; // ID of the producer or consumer
+    int id;  // ID of the producer or consumer
 } ThreadArgs;
 
 // Function for the producer thread
@@ -37,13 +37,14 @@ void* producer(void* arg) {
         item++;
         buffer[count] = item;
         count++;
-        printf("Producer %d produced: %d, total items: %d\n", producer_id, item, count);
+        printf("Producer %d produced: %d, total items: %d\n", producer_id, item,
+               count);
 
         // Signal the consumer that there is an item available
         pthread_cond_signal(&cond_consumer);
         pthread_mutex_unlock(&mutex);
 
-        sleep(0.1); // Simulate production time
+        sleep(0.1);  // Simulate production time
     }
     return NULL;
 }
@@ -65,13 +66,14 @@ void* consumer(void* arg) {
         // Consume an item
         int consumed_item = buffer[count - 1];
         count--;
-        printf("Consumer %d consumed: %d, total items: %d\n", consumer_id, consumed_item, count);
+        printf("Consumer %d consumed: %d, total items: %d\n", consumer_id,
+               consumed_item, count);
 
         // Signal the producer that there is space available
         pthread_cond_signal(&cond_producer);
         pthread_mutex_unlock(&mutex);
 
-        sleep(0.2); // Simulate consumption time
+        sleep(0.2);  // Simulate consumption time
     }
     return NULL;
 }
@@ -80,7 +82,7 @@ void* consumer(void* arg) {
 void createProducers(pthread_t* producer_threads, int num_producers) {
     for (int i = 0; i < num_producers; i++) {
         ThreadArgs* args = malloc(sizeof(ThreadArgs));
-        args->id = i + 1; // Assign unique ID to each producer
+        args->id = i + 1;  // Assign unique ID to each producer
         pthread_create(&producer_threads[i], NULL, producer, args);
     }
 }
@@ -89,7 +91,7 @@ void createProducers(pthread_t* producer_threads, int num_producers) {
 void createConsumers(pthread_t* consumer_threads, int num_consumers) {
     for (int i = 0; i < num_consumers; i++) {
         ThreadArgs* args = malloc(sizeof(ThreadArgs));
-        args->id = i + 1; // Assign unique ID to each consumer
+        args->id = i + 1;  // Assign unique ID to each consumer
         pthread_create(&consumer_threads[i], NULL, consumer, args);
     }
 }

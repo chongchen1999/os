@@ -12,7 +12,7 @@ pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
 void* print_left(void* arg) {
     while (1) {
         pthread_mutex_lock(&mutex);
-        while (state!= 0) {
+        while (state != 0) {
             pthread_cond_wait(&cond, &mutex);
         }
         printf("<");
@@ -27,7 +27,7 @@ void* print_left(void* arg) {
 void* print_right(void* arg) {
     while (1) {
         pthread_mutex_lock(&mutex);
-        while (state!= 1) {
+        while (state != 1) {
             pthread_cond_wait(&cond, &mutex);
         }
         printf(">");
@@ -46,7 +46,7 @@ void* print_right(void* arg) {
 void* print_underscore(void* arg) {
     while (1) {
         pthread_mutex_lock(&mutex);
-        while (state!= 2) {
+        while (state != 2) {
             pthread_cond_wait(&cond, &mutex);
         }
         printf("_");
@@ -56,7 +56,6 @@ void* print_underscore(void* arg) {
     }
     return NULL;
 }
-
 
 int main() {
     pthread_t left_thread, right_thread, underscore_thread;

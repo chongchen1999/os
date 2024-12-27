@@ -1,8 +1,8 @@
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <pthread.h>
-#include <unistd.h>
 #include <time.h>
+#include <unistd.h>
 
 #define BUFFER_SIZE 10
 
@@ -12,15 +12,11 @@ typedef struct {
     int in;
     int out;
     pthread_mutex_t mutex;
-    pthread_cond_t not_full;    // Condition variable for buffer not full
-    pthread_cond_t not_empty;   // Condition variable for buffer not empty
+    pthread_cond_t not_full;   // Condition variable for buffer not full
+    pthread_cond_t not_empty;  // Condition variable for buffer not empty
 } Buffer;
 
-Buffer shared_buffer = {
-    .count = 0,
-    .in = 0,
-    .out = 0
-};
+Buffer shared_buffer = {.count = 0, .in = 0, .out = 0};
 
 int item = 0;
 
@@ -44,8 +40,8 @@ void* producer(void* arg) {
         shared_buffer.in = (shared_buffer.in + 1) % BUFFER_SIZE;
         shared_buffer.count++;
 
-        printf("Producer %d produced: %d, total items: %d\n", 
-               producer_id, item, shared_buffer.count);
+        printf("Producer %d produced: %d, total items: %d\n", producer_id, item,
+               shared_buffer.count);
 
         // Signal that buffer is not empty
         pthread_cond_signal(&shared_buffer.not_empty);
@@ -76,8 +72,8 @@ void* consumer(void* arg) {
         shared_buffer.out = (shared_buffer.out + 1) % BUFFER_SIZE;
         shared_buffer.count--;
 
-        printf("Consumer %d consumed: %d, total items: %d\n", 
-               consumer_id, item, shared_buffer.count);
+        printf("Consumer %d consumed: %d, total items: %d\n", consumer_id, item,
+               shared_buffer.count);
 
         // Signal that buffer is not full
         pthread_cond_signal(&shared_buffer.not_full);

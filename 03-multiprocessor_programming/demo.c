@@ -2,11 +2,6 @@
 
 const int thread_num = 10;
 
-void T() {
+void T() {}
 
-}
-
-int main() {
-    
-    return 0;
-}
+int main() { return 0; }

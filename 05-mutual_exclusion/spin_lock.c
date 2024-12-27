@@ -1,15 +1,13 @@
-#include <stdio.h>
 #include <pthread.h>
-#include <stdatomic.h> // For atomic operations
+#include <stdatomic.h>  // For atomic operations
+#include <stdio.h>
 
 typedef struct {
-    atomic_flag flag; // Spin lock flag
+    atomic_flag flag;  // Spin lock flag
 } SpinLock;
 
 // Initialize the spin lock
-void spin_lock_init(SpinLock *lock) {
-    atomic_flag_clear(&lock->flag);
-}
+void spin_lock_init(SpinLock *lock) { atomic_flag_clear(&lock->flag); }
 
 // Acquire the spin lock
 void spin_lock_acquire(SpinLock *lock) {
@@ -19,9 +17,7 @@ void spin_lock_acquire(SpinLock *lock) {
 }
 
 // Release the spin lock
-void spin_lock_release(SpinLock *lock) {
-    atomic_flag_clear(&lock->flag);
-}
+void spin_lock_release(SpinLock *lock) { atomic_flag_clear(&lock->flag); }
 
 // Shared resource
 int shared_counter = 0;
@@ -34,7 +30,7 @@ void *increment_counter(void *arg) {
     for (int i = 0; i < 1000000; i++) {
         // Acquire the lock
         spin_lock_acquire(&lock);
-        
+
         // Critical section
         shared_counter++;
 

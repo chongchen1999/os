@@ -1,20 +1,18 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdatomic.h>
 #include <assert.h>
-#include <unistd.h>
 #include <pthread.h>
+#include <stdatomic.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 #define NTHREAD 64
-enum
-{
+enum {
     T_FREE = 0,
     T_LIVE,
     T_DEAD,
 };
-struct thread
-{
+struct thread {
     int id, status;
     pthread_t thread;
     void (*entry)(int);
@@ -22,15 +20,13 @@ struct thread
 
 struct thread tpool[NTHREAD], *tptr = tpool;
 
-void *wrapper(void *arg)
-{
+void *wrapper(void *arg) {
     struct thread *thread = (struct thread *)arg;
     thread->entry(thread->id);
     return NULL;
 }
 
-void create(void *fn)
-{
+void create(void *fn) {
     assert(tptr - tpool < NTHREAD);
     *tptr = (struct thread){
         .id = tptr - tpool + 1,
@@ -41,20 +37,14 @@ void create(void *fn)
     ++tptr;
 }
 
-void join()
-{
-    for (int i = 0; i < NTHREAD; i++)
-    {
+void join() {
+    for (int i = 0; i < NTHREAD; i++) {
         struct thread *t = &tpool[i];
-        if (t->status == T_LIVE)
-        {
+        if (t->status == T_LIVE) {
             pthread_join(t->thread, NULL);
             t->status = T_DEAD;
         }
     }
 }
 
-__attribute__((destructor)) void cleanup()
-{
-    join();
-}
+__attribute__((destructor)) void cleanup() { join(); }

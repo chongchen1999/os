@@ -1,18 +1,18 @@
-#include <stdio.h>
 #include <pthread.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #define NUM_THREADS 5
 #define INCREMENTS 1000
 
-int counter = 0;               // Shared resource
-pthread_mutex_t mutex;         // Mutex to protect the shared resource
+int counter = 0;        // Shared resource
+pthread_mutex_t mutex;  // Mutex to protect the shared resource
 
 // Thread function to increment the counter
 void* increment_counter(void* arg) {
     for (int i = 0; i < INCREMENTS; i++) {
-        pthread_mutex_lock(&mutex);  // Lock the mutex
-        counter++;                   // Critical section
+        pthread_mutex_lock(&mutex);    // Lock the mutex
+        counter++;                     // Critical section
         pthread_mutex_unlock(&mutex);  // Unlock the mutex
     }
     return NULL;
