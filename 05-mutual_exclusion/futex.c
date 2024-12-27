@@ -1,14 +1,15 @@
 #include <linux/futex.h>
-#include <sys/syscall.h>
-#include <unistd.h>
-#include <sys/time.h>
+#include <pthread.h>
+#include <stdatomic.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdatomic.h>
-#include <pthread.h>
+#include <sys/syscall.h>
+#include <sys/time.h>
+#include <unistd.h>
 
 // Futex syscall wrapper
-int futex(int *uaddr, int futex_op, int val, const struct timespec *timeout, int *uaddr2, int val3) {
+int futex(int *uaddr, int futex_op, int val, const struct timespec *timeout,
+          int *uaddr2, int val3) {
     return syscall(SYS_futex, uaddr, futex_op, val, timeout, uaddr2, val3);
 }
 
@@ -16,12 +17,13 @@ int futex(int *uaddr, int futex_op, int val, const struct timespec *timeout, int
 atomic_int futex_var = 0;
 
 // Thread function
-void* thread_func(void* arg) {
+void *thread_func(void *arg) {
     printf("Thread %ld waiting for futex...\n", pthread_self());
 
     // Wait until futex_var becomes non-zero
     while (atomic_load(&futex_var) == 0) {
-        futex((int *)&futex_var, FUTEX_WAIT, 0, NULL, NULL, 0);  // Cast to int *
+        futex((int *)&futex_var, FUTEX_WAIT, 0, NULL, NULL,
+              0);  // Cast to int *
     }
 
     printf("Thread %ld woke up!\n", pthread_self());
@@ -37,7 +39,7 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    sleep(2); // Simulate work in the main thread
+    sleep(2);  // Simulate work in the main thread
 
     printf("Main thread signaling futex...\n");
     atomic_store(&futex_var, 1);
