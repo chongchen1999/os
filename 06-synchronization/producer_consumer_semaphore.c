@@ -1,25 +1,25 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <assert.h>
 #include <pthread.h>
 #include <semaphore.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
-#include <assert.h>
 
 #define BUFFER_SIZE 10  // Size of the shared buffer
 
-int buffer[BUFFER_SIZE]; // The shared buffer
-int in = 0;              // Index for the producer
-int out = 0;             // Index for the consumer
-int item = 0;            // Item to be produced
+int buffer[BUFFER_SIZE];  // The shared buffer
+int in = 0;               // Index for the producer
+int out = 0;              // Index for the consumer
+int item = 0;             // Item to be produced
 
 // Semaphores
-sem_t empty;   // Tracks empty slots
-sem_t full;    // Tracks filled slots
-sem_t mutex;   // Ensures mutual exclusion
+sem_t empty;  // Tracks empty slots
+sem_t full;   // Tracks filled slots
+sem_t mutex;  // Ensures mutual exclusion
 
 // Struct to pass thread arguments
 typedef struct {
-    int id; // ID of the producer or consumer
+    int id;  // ID of the producer or consumer
 } ThreadArgs;
 
 // Function for the producer thread
@@ -48,7 +48,7 @@ void* producer(void* arg) {
         // Signal that a new item is available
         sem_post(&full);
 
-        sleep(0.1); // Simulate production time
+        sleep(0.1);  // Simulate production time
     }
     return NULL;
 }
@@ -67,7 +67,8 @@ void* consumer(void* arg) {
 
         // Remove an item from the buffer
         int consumed_item = buffer[out];
-        printf("Consumer %d consumed: %d from index %d\n", consumer_id, consumed_item, out);
+        printf("Consumer %d consumed: %d from index %d\n", consumer_id,
+               consumed_item, out);
         out = (out + 1) % BUFFER_SIZE;
 
         // Unlock the critical section
@@ -76,7 +77,7 @@ void* consumer(void* arg) {
         // Signal that an empty slot is available
         sem_post(&empty);
 
-        sleep(0.2); // Simulate consumption time
+        sleep(0.2);  // Simulate consumption time
     }
     return NULL;
 }
@@ -85,7 +86,7 @@ void* consumer(void* arg) {
 void createProducers(pthread_t* producer_threads, int num_producers) {
     for (int i = 0; i < num_producers; i++) {
         ThreadArgs* args = malloc(sizeof(ThreadArgs));
-        args->id = i + 1; // Assign unique ID to each producer
+        args->id = i + 1;  // Assign unique ID to each producer
         pthread_create(&producer_threads[i], NULL, producer, args);
     }
 }
@@ -94,7 +95,7 @@ void createProducers(pthread_t* producer_threads, int num_producers) {
 void createConsumers(pthread_t* consumer_threads, int num_consumers) {
     for (int i = 0; i < num_consumers; i++) {
         ThreadArgs* args = malloc(sizeof(ThreadArgs));
-        args->id = i + 1; // Assign unique ID to each consumer
+        args->id = i + 1;  // Assign unique ID to each consumer
         pthread_create(&consumer_threads[i], NULL, consumer, args);
     }
 }
@@ -107,9 +108,9 @@ int main() {
     pthread_t consumer_threads[num_consumers];
 
     // Initialize the semaphores
-    sem_init(&empty, 0, BUFFER_SIZE); // Start with all slots empty
-    sem_init(&full, 0, 0);            // Start with no filled slots
-    sem_init(&mutex, 0, 1);           // Mutex starts unlocked
+    sem_init(&empty, 0, BUFFER_SIZE);  // Start with all slots empty
+    sem_init(&full, 0, 0);             // Start with no filled slots
+    sem_init(&mutex, 0, 1);            // Mutex starts unlocked
 
     // Create the producer and consumer threads
     createProducers(producer_threads, num_producers);
