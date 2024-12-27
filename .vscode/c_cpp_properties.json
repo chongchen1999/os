@@ -1,0 +1,15 @@
+{
+    "configurations": [
+      {
+        "name": "GCC",
+        "includePath": ["${workspaceFolder}/**"],
+        "defines": [],
+        "compilerPath": "/usr/bin/g++", // Adjust this path
+        "cStandard": "c17",
+        "cppStandard": "c++20",                      // Set C++20 standard
+        "intelliSenseMode": "gcc-x64"
+      }
+    ],
+    "version": 4
+  }
+  
