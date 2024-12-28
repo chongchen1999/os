@@ -8,7 +8,6 @@ enable_language(ASM)
 
 # Add the executable
 add_executable(01 ptr2main.c)
-
-add_executable(02 minimal.s)
-set_target_properties(02 PROPERTIES LINK_FLAGS "-nostdlib")
-
+add_executable(02 vdso.c)
+add_executable(03 mmap-alloc.c)
+add_executable(04 file_mapping.c)

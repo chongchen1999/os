@@ -1,15 +1,21 @@
 {
-    "configurations": [
+  "configurations": [
       {
-        "name": "GCC",
-        "includePath": ["${workspaceFolder}/**"],
-        "defines": [],
-        "compilerPath": "/usr/bin/g++", // Adjust this path
-        "cStandard": "c17",
-        "cppStandard": "c++20",                      // Set C++20 standard
-        "intelliSenseMode": "gcc-x64"
+          "name": "Linux",
+          "includePath": [
+              "${workspaceFolder}/**",
+              "/usr/include",
+              "/usr/include/x86_64-linux-gnu",
+              "/usr/local/include"
+          ],
+          "defines": [
+              "_GNU_SOURCE"
+          ],
+          "compilerPath": "/usr/bin/gcc",
+          "cStandard": "c17",
+          "cppStandard": "c++20",
+          "intelliSenseMode": "linux-gcc-x64"
       }
-    ],
-    "version": 4
-  }
-  
+  ],
+  "version": 4
+}

@@ -1,0 +1,46 @@
+The issue arises because the IntelliSense engine in VS Code is not configured to recognize `MAP_ANONYMOUS` due to missing include directories or definitions. You can fix this by updating your `c_cpp_properties.json` file to ensure that the necessary headers and defines are included.
+
+Here’s how you can update your `c_cpp_properties.json`:
+
+1. Add the appropriate system include paths where `sys/mman.h` resides. These paths vary depending on your Linux distribution and setup.
+2. Add a define for `_GNU_SOURCE`, which ensures that GNU extensions like `MAP_ANONYMOUS` are available.
+
+Below is an example of a properly updated `c_cpp_properties.json`:
+
+```json
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/usr/include",
+                "/usr/include/x86_64-linux-gnu",
+                "/usr/local/include"
+            ],
+            "defines": [
+                "_GNU_SOURCE"
+            ],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ],
+    "version": 4
+}
+```
+
+### Explanation:
+1. **`includePath`**: Adds paths where standard system headers like `sys/mman.h` can be found.
+2. **`defines`**: Adding `_GNU_SOURCE` ensures that GNU-specific macros (like `MAP_ANONYMOUS`) are defined.
+3. **`compilerPath`**: Specifies the path to your compiler; adjust it if you use a different compiler or location.
+4. **`cStandard` and `cppStandard`**: Ensures compatibility with the C standard used in your code.
+
+### Steps to Apply Changes:
+1. Open the `.vscode` folder in your project directory.
+2. Locate or create the `c_cpp_properties.json` file.
+3. Replace its contents with the updated configuration above.
+4. Save the file and restart the VS Code editor or reload the C/C++ IntelliSense engine by pressing `Ctrl+Shift+P` and selecting **C/C++: Reset IntelliSense Database**.
+
+After this update, the warning about `MAP_ANONYMOUS` should disappear.
