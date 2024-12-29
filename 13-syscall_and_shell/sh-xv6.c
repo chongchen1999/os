@@ -145,14 +145,14 @@ void runcmd(struct cmd* cmd) {
                 syscall(SYS_dup, p[1]);
                 syscall(SYS_close, p[0]);
                 syscall(SYS_close, p[1]);
-                runcmd(pcmd->left);
+                runcmd(pcmd->left); // no return
             }
             if (syscall(SYS_fork) == 0) {
                 syscall(SYS_close, 0);
                 syscall(SYS_dup, p[0]);
                 syscall(SYS_close, p[0]);
                 syscall(SYS_close, p[1]);
-                runcmd(pcmd->right);
+                runcmd(pcmd->right); // no return
             }
             syscall(SYS_close, p[0]);
             syscall(SYS_close, p[1]);
