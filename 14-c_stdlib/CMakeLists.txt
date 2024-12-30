@@ -6,3 +6,4 @@ set(CMAKE_C_STANDARD 11)
 
 add_executable(siz sizeof_.c)
 add_executable(sys sys_.c)
+add_executable(env env_.c)
