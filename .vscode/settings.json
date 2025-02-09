@@ -3,5 +3,6 @@
         "unistd.h": "c",
         "string.h": "c",
         "libc-header-start.h": "c"
-    }
+    },
+    "cmake.sourceDirectory": "/home/tourist/diy/os/os-jyy/06-synchronization"
 }
