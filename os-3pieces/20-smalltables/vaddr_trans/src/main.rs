@@ -1,3 +1,4 @@
+use rand::Rng;
 use std::collections::{HashMap, VecDeque};
 
 struct TLB {
@@ -66,13 +67,6 @@ fn translate(va: u64, cr3: u64, tlb: &mut TLB, mem_manager: &mut MemoryManager) 
         return ((pfn << 12) | (va & 0xFFF), true);
     }
 
-    // [63, 48] : 16-bit, 
-    // [47, 39] : 9-bit, VPN[3]
-    // [38, 30] : 9-bit, VPN[2]
-    // [29, 21] : 9-bit, VPN[1]
-    // [20, 12] : 9-bit, VPN[0]
-    // [11, 0]  : 12-bit, offset
-
     let indices = [
         (va >> 39) & 0x1FF,
         (va >> 30) & 0x1FF,
@@ -83,6 +77,8 @@ fn translate(va: u64, cr3: u64, tlb: &mut TLB, mem_manager: &mut MemoryManager) 
 
     let mut current_addr = cr3;
     for (_i, &level) in indices.iter().enumerate() {
+        println!("Index: {}, Level: {}", _i, level);
+
         let table = mem_manager.physical_memory.get(&current_addr);
         if table.is_none() || table.unwrap()[level as usize].is_none() {
             current_addr = mem_manager.handle_page_fault(current_addr, level as usize);
@@ -102,37 +98,32 @@ fn main() {
     let mut tlb = TLB::new(16);
     let cr3 = 0x1000;
 
+    // Set up memory mappings
     mem_manager.physical_memory.insert(
         0x1000,
-        vec![Some((true, 0x2000))]
-            .into_iter()
-            .chain(vec![None; 511])
-            .collect(),
+        vec![Some((true, 0x2000))].into_iter().chain(vec![None; 511]).collect(),
     );
     mem_manager.physical_memory.insert(
         0x2000,
-        vec![Some((true, 0x3000))]
-            .into_iter()
-            .chain(vec![None; 511])
-            .collect(),
+        vec![Some((true, 0x3000))].into_iter().chain(vec![None; 511]).collect(),
     );
     mem_manager.physical_memory.insert(
         0x3000,
-        vec![Some((true, 0x4000))]
-            .into_iter()
-            .chain(vec![None; 511])
-            .collect(),
+        vec![Some((true, 0x4000))].into_iter().chain(vec![None; 511]).collect(),
     );
     mem_manager.physical_memory.insert(
         0x4000,
-        vec![Some((true, 0x5000))]
-            .into_iter()
-            .chain(vec![None; 511])
-            .collect(),
+        vec![Some((true, 0x5000))].into_iter().chain(vec![None; 511]).collect(),
     );
 
-    let test_vas = [0x0, 0x123, 0x0, 0x200000, 0x400000];
-    for &va in &test_vas {
+    // Generate 100 random virtual addresses
+    let mut rng = rand::thread_rng();
+    let random_vas: Vec<u64> = (0..100)
+        .map(|_| rng.gen_range(0..0xFFFFFFFFFFFF)) // 48-bit virtual addresses
+        .collect();
+
+    // Test the program with the random virtual addresses
+    for va in random_vas {
         let (pa, hit) = translate(va, cr3, &mut tlb, &mut mem_manager);
         println!(
             "Virtual 0x{:016x} -> Physical 0x{:016x}, TLB hit: {}",
