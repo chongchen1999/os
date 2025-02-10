@@ -3,6 +3,13 @@
 version = 4
 
 [[package]]
+name = "almost_lru"
+version = "0.1.0"
+dependencies = [
+ "rand",
+]
+
+[[package]]
 name = "byteorder"
 version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -107,6 +114,13 @@ checksum = "a210d160f08b701c8721ba1c726c11662f877ea6b7094007e1ca9a1041945034"
 
 [[package]]
 name = "vaddr_trans"
+version = "0.1.0"
+dependencies = [
+ "rand",
+]
+
+[[package]]
+name = "vmem_swapping"
 version = "0.1.0"
 dependencies = [
  "rand",
