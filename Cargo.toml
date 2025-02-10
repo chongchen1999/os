@@ -5,5 +5,5 @@ members = [
     "os-3pieces/21-swapping/almost_lru",
     "os-3pieces/21-swapping/vmem_swapping",
     "os-3pieces/23-vax-system/vax_sys", "os-3pieces/26-threads/closure_",
-    "os-3pieces/26-threads/pthread_rust",
+    "os-3pieces/26-threads/pthread_rust", "os-3pieces/27-threads-api/mutex_lock",
 ]
