@@ -1,5 +1,5 @@
 [workspace]
 resolver = "2"
 members = [
-    "os-3pieces/20-smalltables/vaddr_trans", "os-3pieces/21-swapping/almost_lru", "os-3pieces/21-swapping/vmem_swapping",
+    "os-3pieces/20-smalltables/vaddr_trans", "os-3pieces/21-swapping/almost_lru", "os-3pieces/21-swapping/vmem_swapping", "os-3pieces/23-vax-system/vax_sys",
 ]
