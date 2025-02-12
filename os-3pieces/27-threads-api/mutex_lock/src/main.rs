@@ -18,6 +18,7 @@ fn thread_function(lock: Arc<Mutex<()>>, thread_id: u64) {
 fn main() {
     // Create a Mutex
     let lock = Arc::new(Mutex::new(()));
+    
     println!("The reference count of the lock is: {}", Arc::strong_count(&lock) as u64);
 
     // Display size of Mutex (for Rust's Mutex)
