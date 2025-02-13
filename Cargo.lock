@@ -26,6 +26,10 @@ name = "closure_"
 version = "0.1.0"
 
 [[package]]
+name = "compare_and_swap"
+version = "0.1.0"
+
+[[package]]
 name = "cond_var"
 version = "0.1.0"
 
